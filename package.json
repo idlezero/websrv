@@ -1,0 +1,22 @@
+{
+    "name": "websrv",
+    "version": "0.0.0",
+    "description": "websrv",
+    "main": "server/app.js",
+    "author": {
+        "name": "void"
+    },
+    "dependencies": {
+        "express": "^4.16.3",
+        "mongo-mock": "^3.3.2",
+        "mongodb": "^3.1.8",
+        "npm": "^6.4.1",
+        "winston": "^3.1.0",
+        "winston-daily-rotate-file": "^3.3.3"
+    },
+    "license": "",
+    "repository": "",
+    "scripts": {
+        "start": "node server/app.js",
+    }
+}

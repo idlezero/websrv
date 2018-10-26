@@ -1,0 +1,851 @@
+<!doctype html>
+<html>
+<head>
+   <meta charset="UTF-8" />
+   <title>Notes</title>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald|Roboto:400,700">
+
+   <style>
+      body {
+         font-size: 14px;
+         line-height: 1.5;
+         text-align: center;
+      }
+
+      #page-wrap {
+         text-align: left;
+         width: 800px;
+         margin: 0 auto;
+      }
+
+      h1, h2, h3, h4, h5, h6 {
+         font-family: 'Oswald', sans-serif;
+      }
+
+      h1 {
+         font-size: 1rem;
+         margin-top: 1em;
+         margin-bottom: .5em;
+      }
+
+      p {
+         font-family: 'Roboto', sans-serif;
+         font-size: .8rem;
+      }
+
+      .timeline-item {
+         padding: 1em 1em 0.01em 1em;
+         position: relative;
+         color: rgba(0, 0, 0, 0.7);
+         border-left: 2px solid rgba(0, 0, 0, 0.3);
+      }
+
+      .timeline-item p {
+         font-size: 1rem;
+         margin: 4px, 0;
+      }
+
+      .timeline-item::before {
+         content: attr(note-info);
+         position: absolute;
+         left: 2em;
+         font-weight: bold;
+         top: 1em;
+         display: block;
+         font-family: 'Roboto', sans-serif;
+         font-weight: 700;
+         font-size: .785rem;
+      }
+
+      .timeline-item::after {
+         width: 10px;
+         height: 10px;
+         display: block;
+         top: 1em;
+         position: absolute;
+         left: -7px;
+         border-radius: 10px;
+         content: '';
+         border: 2px solid rgba(0, 0, 0, 0.3);
+         background: white;
+      }
+
+      .timeline-item:last-child {
+         -o-border-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 60%, transparent) 1 100%;
+         border-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.3) 60%, transparent) 1 100%;
+         border-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 60%, transparent) 1 100%;
+      }
+
+      hr {
+         display: block;
+         height: 1px;
+         border: 0;
+         border-top: 1px solid #ccc;
+         margin: 1em 0;
+         padding: 0;
+      }
+
+      .hline {
+         display: block;
+         height: 3px;
+         border: 0;
+         border-bottom: 3px solid;
+         margin: 1em 0;
+         padding: 0;
+      }
+
+      .hline1 {
+         border-bottom: 3px solid;
+         border-color: #cc181e;
+         padding-bottom: 0;
+         display: inline-block;
+      }
+
+      .header {
+         font-family: Verdana, Geneva, sans-serif;
+         font-size: 13px;
+         line-height: normal;
+         display: inline-block;
+         padding-bottom: 4px;
+         border-bottom: 3px solid;
+         margin: 1em 0;
+         width: 100%
+      }
+   </style>
+
+   <style>
+      .user-item {
+      }
+
+      .user-name {
+         display: inline-block;
+         width: 300px;
+      }
+
+      .user-btn {
+         display: inline-block;
+         cursor: pointer;
+         font-size: 14px;
+         color: #888;
+      }
+
+      .user-btn:hover {
+         color: #333;
+      }
+
+      .user-table {
+         display: table;
+         table-layout: fixed;
+         border-collapse: collapse;
+         border-spacing: 0;
+         word-wrap: break-word;
+         font-family: Verdana, sans-serif;
+         margin: 0;
+         padding: 0;
+      }
+
+      .user-table-head {
+         display: table-header-group;
+         background-color: #f5f5f5;
+         font-size: 12px;
+         font-weight: 700;
+      }
+
+      .user-table-row {
+         display: table-row;
+         padding: 20px;
+         border-bottom: 1px dotted #ddd;
+         cursor: pointer;
+         width: 660px;
+      }
+
+      .user-table-row:hover {
+         background: rgb(222,220,202);
+      }
+
+      .user-table-cell {
+         display: table-cell;
+         text-align: left;
+         word-wrap: break-word;
+         padding: 0.4rem;
+      }
+
+      .user-edit {
+         margin-left: 6px;
+      }
+
+      .user-edit .user-table-input {
+         width: 100%;
+         height: inherit !important;
+         font-weight: 500;
+         background: none;
+         border: 0;
+         border-bottom: 2px solid #1e9ce6;
+      }
+
+      .user-table-incell {
+         display: table-cell;
+         width: inherit !important;
+         height: inherit !important;
+      }
+
+      .user-table-incell .user-table-input {
+         width: 100%;
+         height: inherit !important;
+         font-weight: 500;
+         background: none;
+         border: 0;
+         border-bottom: 2px solid #1e9ce6;
+      }
+
+      .user-table-input:focus {
+         outline: 0;
+      }
+
+      .notes {
+         width: 100%;
+         height: 300px;
+         overflow: auto;
+      }
+
+      .apilog {
+         width: 100%;
+         height: 400px;
+         overflow: auto;
+      }
+
+      .logline {
+         margin-top: 0px;
+         margin-bottom: 6px;
+         margin-left: 5px;
+         font-size: 0.85em;
+         font-family: monospace;
+      }
+
+      .request {
+         background: #fff4cc;
+         border-left: 5px solid #ffe070;
+      }
+
+      .response {
+         border-left: 5px solid #558abb;
+         color: #4d4e53;
+      }
+
+      .error {
+         background: #ffdecc;
+         border-left: 5px solid #f32626;
+      }
+
+      .warn {
+         background: #f0d593;
+         border-left: 5px solid #c5a32f;
+      }
+   </style>
+</head>
+
+<body>
+   <div id="page-wrap">
+      <div class="header" style="border-color: #fc8500;">Admin interface</div>
+      <div style="display: inline-block;">
+         <button type="button" onclick="listUsers()">Get Users</button>
+         <button type="button" onclick="clearUsers()">Clear Users</button>
+         <button type="button" onclick="listNotes()">Get Notes</button>
+         <button type="button" onclick="clearNotes()">Clear Notes</button>
+      </div>
+
+      <div style="display: inline-block;">
+         <span>User name</span>
+         <input id="adduser" type="text" maxlength="20">
+         <button type="button" onclick="createUser()">Create User</button>
+      </div>
+      <hr>
+      <div class="user-table" style="width: 100%; height: 100px;">
+         <div id="users" class="user-item" style="width: 100%; height: 100px; overflow:auto">
+         </div>
+      </div>
+
+      <div class="header" style="border-color: #72aa01">User interface</div>
+
+      <div style="margin-bottom: 10px">
+         <span>User</span>&nbsp;&nbsp;<span><input id="sender" type="text" maxlength="16" readonly disabled></span>
+         <span>Title</span>&nbsp;&nbsp;<span><input id="title" type="text" maxlength="16"></span>
+         <span>Text</span>&nbsp;&nbsp;<span><input id="text" type="text" style="width: 300px"></span>
+         <span><button type="button" onclick="sendNote()">Send</button></span>
+      </div>
+
+      <div id="notes" class="notes"></div>
+
+      <div class="header" style="border-color: #2c66a2;">API calls console</div>
+
+      <div id="apilog" class="apilog"></div>
+   </div>
+
+   <div id="hidden" style="display: none;">
+      <div id="edit_user" class="user-edit" style="display: block;">
+         <input id="edit_user_input" type="text" class="user-table-input">
+      </div>
+   </div>
+
+   <script>
+      var Users  = [];
+      var Notes  = [];
+      var usrrow = null;
+      var userel = null;
+      var userid;
+      var sender;
+
+      var id2name = function (id) {
+         let user = Users.find ((u) => {return (u._id === id)});
+         return (user)? user.name : undefined;
+      };
+
+      var name2id = function (name) {
+         let user = Users.find ((u) => {return (u.name === name)});
+         return (user)? user.id : undefined;
+      };
+
+      var logApiCall = function (method, xhr, body) {
+         let url   = xhr.responseURL;
+         let scode = xhr.status;
+         let stext = xhr.statusText;
+         let data  = xhr.response;
+         let rbody = (body)? '<p class="logline">' + body + '</p>' : '';
+         let sbody = (data)? '<p class="logline">' + data + '</p>' : '';
+
+         let log  = document.getElementById ('apilog');
+         let item = document.createElement ('div');
+
+         let req = '<div class="request">' + '<p class="logline">' + method + ' ' + url + '</p>' + rbody + '</div>';
+         let res = '<div class="response">' + '<p class="logline">' + scode + ' ' + stext + '</p>' + sbody + '</div>';
+
+         item.innerHTML = req + res;
+         log.appendChild (item);
+         item.scrollIntoView ();
+      };
+
+      var logError = function (msg) {
+         let log  = document.getElementById ('apilog');
+         let item = document.createElement ('div');
+
+         item.innerHTML = '<div class="error"><p class="logline">' + msg + '</p></div>';
+         log.appendChild (item);
+         item.scrollIntoView ();
+      };
+
+      var logWarn = function (msg) {
+         let log  = document.getElementById ('apilog');
+         let item = document.createElement ('div');
+
+         item.innerHTML = '<div class="warn"><p class="logline">' + msg + '</p></div>';
+         log.appendChild (item);
+         item.scrollIntoView ();
+      };
+
+      // initialization
+
+      var init = function () {
+         var input = document.getElementById ('edit_user_input');
+
+         document.addEventListener ('keyup', function (event) {
+            if (event.keyCode === 27) {
+               if (document.getElementById ('edit_user').style.display !== 'none') {
+                  hideEditUser (false);
+               }
+            }
+         });
+
+         var ebox = document.getElementById ('edit_user_input');
+
+         ebox.addEventListener ('blur', function () {
+            hideEditUser (false);
+         });
+
+         ebox.addEventListener('keyup', function (event) {
+            if (event.keyCode === 13) {
+               hideEditUser (true);
+            }
+            else if (event.keyCode === 27) {
+               hideEditUser (false);
+            }
+         });
+
+         usrrow = document.createDocumentFragment ();
+
+         let div = document.createElement ('div');
+         div.innerHTML = '<div class="user-table-row">'
+            + '<div class="user-table-cell" style="width: 340px;"><div class="user-name" onclick="onSelectUser(this)"></div></div>'
+            + '<div class="user-table-cell">'
+            + '<div>'
+            + '<div class="user-btn" onclick="onEditUser(this)"><span class="fa fa-pencil" style="margin-left: 6px;"></span></div>'
+            + '<div class="user-btn" onclick="onDeleteUser(this)"><span class="fa fa-remove" style="margin-left: 6px;"></span></div>'
+            + '</div>'
+            + '</div>'
+            + '</div>';
+
+         usrrow.appendChild (div);
+      };
+
+      // UI functions
+
+      var addUser = function (user) {
+         Users.push (user);
+
+         let table = document.getElementById ('users');
+         let row   = usrrow.children[0].children[0].cloneNode (true);
+
+         row.id = user._id;
+         row.children[0].children[0].innerText = user.name;
+
+         table.appendChild (row);
+         row.scrollIntoView ();
+      };
+
+      var setUser = function (user) {
+         let i = Users.findIndex ((n) => {
+            return (n._id === user._id);
+         });
+
+         if (i !== -1) {
+            Users[i] = user;
+         }
+      };
+
+      var onEditUser = function (el) {
+         showEditUser (el);
+      };
+
+      var showEditUser = function (el) {
+         let row = el.parentElement.parentElement.parentElement;
+         let src = row.children[0];
+         let dst = document.getElementById ('edit_user');
+         let hdn = document.getElementById ('hidden');
+         let box = dst.children[0];
+
+         if (userel) {
+            hideEditUser (false);
+         }
+
+         hdn.insertBefore (src, dst);
+         row.insertBefore (dst, el.parentNode.parentNode);
+
+         userel = src;
+         userid = row.id;
+
+         box.value = src.innerText;
+         box.focus ();
+      };
+
+      var hideEditUser = function (update) {
+         let hdn = document.getElementById ('hidden');
+         let src = userel;
+         let dst = document.getElementById ('edit_user');
+         let box = dst.children[0];
+         let row = dst.parentNode;
+
+         if (update) {
+            src.innerText = box.value;
+         }
+
+         row.insertBefore (src, dst);
+         hdn.appendChild (dst);
+
+         userel = null;
+
+         if (update) {
+            updateUser (userid, box.value);
+         }
+      };
+
+      var onSelectUser = function (el) {
+         let tr = el.parentElement.parentElement;
+         sender = tr.id;
+
+         let user = document.getElementById ('sender');
+
+         user.attributes.uid = sender;
+         user.value = id2name (sender);
+      };
+
+      var onDeleteUser = function (el) {
+         deleteUser (el.parentElement.parentElement.parentElement.id);
+      };
+
+      var eraseUsers = function () {
+         Users = [];
+
+         let table = document.getElementById ('users');
+         var rows  = table.children.length;
+         while (rows > 0) table.removeChild (table.children[--rows]);
+      };
+
+      var eraseUser = function (id) {
+         let i = Users.findIndex ((n) => {
+            return (n._id === id);
+         });
+
+         if (i !== -1) {
+            Users.splice (i);
+            let el = document.getElementById (id);
+            el.parentNode.removeChild (el);
+         }
+      };
+
+      var addNote = function (note) {
+         Notes.push (note);
+
+         let notes = document.getElementById ('notes');
+         let item  = document.createElement ('div');
+         let user  = id2name (note.user) || 'Unknown user';
+         let time  = new Date (note.time).toLocaleString ();
+
+         item.setAttribute ('note-info', user + ' ' + time);
+         item.classList.add ('timeline-item');
+         item.innerHTML = '<h1>' + note.title + '</h1><p>' + note.text + '</p>';
+         notes.appendChild (item);
+         item.scrollIntoView ();
+      };
+
+      var setNote = function (note) {
+         for (let n of Notes) {
+            if (n._id === note._id) {
+               n = note;
+               break;
+            }
+         }
+
+         // ::todo::
+         // find UI element for the note and update it (title, text, time)
+      };
+
+      var delNote = function (nid) {
+         let i = Notes.findIndex ((n) => {
+            return (n._id === note._id);
+         });
+
+         if (i !== -1) {
+            Notes.splice (i);
+
+            // ::todo::
+            // find UI element for the note and delte it
+         }
+      };
+
+      var sendNote = function () {
+         if (!sender) {
+            logError ('Please first select an user (execute "<b><i>Get Users</i></b>" or "<b><i>Crete User</i></b>" and then click on the name of desired user)');
+            return;
+         }
+
+         let title = document.getElementById ('title').value;
+         let text  = document.getElementById ('text').value;
+         let user  = sender;
+
+         createNote (title, text, user);
+      };
+
+      var eraseNotes = function () {
+         Notes = [];
+
+         let notes = document.getElementById ('notes');
+
+         while (notes.firstChild) {
+            notes.removeChild(notes.firstChild);
+         }
+      };
+
+      // API functions
+
+      var listUsers = function () {
+         let req = new XMLHttpRequest ();
+
+         req.onreadystatechange = function () {
+            if (this.readyState === 4) {
+               logApiCall ('GET', this);
+
+               if (this.status === 200) {
+                  try {
+                     eraseUsers ();
+
+                     JSON.parse (this.responseText).forEach ((user) => {
+                        addUser (user);
+                     });
+                  }
+                  catch (err) {
+                     console.error (err);
+                  }
+               }
+            }
+         };
+
+         req.open ('GET', '/user/list', true);
+         req.send ();
+      };
+
+      var clearUsers = function () {
+         let req  = new XMLHttpRequest ();
+         let data = JSON.stringify ({what: 'all'});
+
+         req.onreadystatechange = function () {
+            if (this.readyState === 4) {
+               logApiCall ('POST', this, data);
+
+               if (this.status === 200) {
+                  try {
+                     eraseUsers ();
+                  }
+                  catch (err) {
+                     console.error (err);
+                  }
+               }
+            }
+         };
+
+         req.open ('POST', '/user/delete', true);
+         req.setRequestHeader ('Content-type', 'application/json; charset=utf-8');
+         req.send (data);
+      };
+
+      var createUser = function () {
+         let name = document.getElementById ('adduser').value;
+         let req  = new XMLHttpRequest ();
+         let data = JSON.stringify ({name: name});
+
+         req.onreadystatechange = function () {
+            if (this.readyState === 4) {
+               logApiCall ('POST', this, data);
+
+               if (this.status === 200) {
+                  try {
+                     let user = JSON.parse (this.response);
+                     addUser (user[0]);
+                  }
+                  catch (err) {
+                     console.error (err);
+                  }
+               }
+            }
+         };
+
+         req.open ('POST', '/user/create', true);
+         req.setRequestHeader ('Content-type', 'application/json; charset=utf-8');
+         req.send (data);
+      };
+
+      var updateUser = function (id, name) {
+         let req  = new XMLHttpRequest ();
+         let data = JSON.stringify ({id: id, name: name});
+
+         req.onreadystatechange = function () {
+            if (this.readyState === 4) {
+               logApiCall ('POST', this, data);
+
+               if (this.status === 200) {
+                  try {
+                     setUser (JSON.parse (this.response));
+                  }
+                  catch (err) {
+                     console.error (err);
+                  }
+               }
+            }
+         };
+
+         req.open ('POST', '/user/update', true);
+         req.setRequestHeader ('Content-type', 'application/json; charset=utf-8');
+         req.send (data);
+      };
+
+      var deleteUser = function (id) {
+         let req  = new XMLHttpRequest ();
+         let data = JSON.stringify ({what: 'id', id: id});
+
+         req.onreadystatechange = function () {
+            if (this.readyState === 4) {
+               logApiCall ('POST', this, data);
+
+               if (this.status === 200) {
+                  try {
+                     eraseUser (id);
+                  }
+                  catch (err) {
+                     console.error (err);
+                  }
+               }
+            }
+         };
+
+         req.open ('POST', '/user/delete', true);
+         req.setRequestHeader ('Content-type', 'application/json; charset=utf-8');
+         req.send (data);
+      };
+
+      var listNotes = function () {
+         if (Users.length === 0) {
+            logWarn ('No users loaded/created! The retrieved notes if any will have "<b><i>Unknown user</i></b>" as sender.\nPlease first execute "<b><i>Get Users</i></b>" or "<b><i>Crete User</i></b>".');
+         }
+
+         let req  = new XMLHttpRequest ();
+         let data = JSON.stringify ({what: 'all'});
+
+         req.onreadystatechange = function () {
+            if (this.readyState === 4) {
+               logApiCall ('POST', this, data);
+
+               if (this.status === 200) {
+                  try {
+                     eraseNotes ();
+
+                     JSON.parse (this.response).forEach ((note) => {
+                        addNote (note);
+                     });
+                  }
+                  catch (err) {
+                     console.error (err);
+                  }
+               }
+            }
+         };
+
+         req.open ('POST', '/note/list', true);
+         req.setRequestHeader ('Content-type', 'application/json; charset=utf-8');
+         req.send (data);
+      };
+
+      var clearNotes = function () {
+         let req  = new XMLHttpRequest ();
+         let data = JSON.stringify ({what: 'all'});
+
+         req.onreadystatechange = function () {
+            if (this.readyState === 4) {
+               logApiCall ('POST', this, data);
+
+               if (this.status === 200) {
+                  try {
+                     eraseNotes ();
+                  }
+                  catch (err) {
+                     console.error (err);
+                  }
+               }
+            }
+         };
+
+         req.open ('POST', '/note/delete', true);
+         req.setRequestHeader ('Content-type', 'application/json; charset=utf-8');
+         req.send (data);
+      };
+
+      var readNotes = function (what) {
+         what = what || 'all';
+
+         let req  = new XMLHttpRequest ();
+         let data = JSON.stringify ({what: what});
+
+         req.onreadystatechange = function () {
+            if (this.readyState === 4) {
+               logApiCall ('POST', this, data);
+
+               if (this.status === 200) {
+                  try {
+                     eraseNotes ();
+
+                     JSON.parse (this.response).forEach ((note) => {
+                        addNote (note);
+                     });
+                  }
+                  catch (err) {
+                     console.error (err);
+                  }
+               }
+            }
+         };
+
+         req.open ('POST', '/note/' + user + '/read', true);
+         req.setRequestHeader ('Content-type', 'application/json; charset=utf-8');
+         req.send (data);
+      };
+
+      var createNote = function (title, text, user) {
+         let req  = new XMLHttpRequest ();
+         let data = JSON.stringify ({title: title, text: text});
+
+         req.onreadystatechange = function () {
+            if (this.readyState === 4) {
+               logApiCall ('POST', this, data);
+
+               if (this.status === 200) {
+                  try {
+                     addNote (JSON.parse (this.response));
+                  }
+                  catch (err) {
+                     console.error (err);
+                  }
+               }
+            }
+         };
+
+         req.open ('POST', '/note/' + user + '/create', true);
+         req.setRequestHeader ('Content-type', 'application/json; charset=utf-8');
+         req.send (data);
+      };
+
+      var editNote = function () {
+         let title = '';
+         let text  = '';
+         let uid   = '';
+         let nid   = '';
+
+         let req  = new XMLHttpRequest ();
+         let data = JSON.stringify ({title: title, text: text});
+
+         req.onreadystatechange = function () {
+            if (this.readyState === 4) {
+               logApiCall ('POST', this, data);
+
+               if (this.status === 200) {
+                  try {
+                     setNote (this.response);
+                  }
+                  catch (err) {
+                     console.error (err);
+                  }
+               }
+            }
+         };
+
+         req.open ('POST', '/note/' + uid + '/update/' + nid, true);
+         req.setRequestHeader ('Content-type', 'application/json; charset=utf-8');
+         req.send (data);
+      };
+
+      var deleteNote = function () {
+         let uid = '';
+         let nid = '';
+
+         let req = new XMLHttpRequest ();
+
+         req.onreadystatechange = function () {
+            if (this.readyState === 4) {
+               logApiCall ('GET', this);
+
+               if (this.status === 200) {
+                  try {
+                     delNote (nid);
+                  }
+                  catch (err) {
+                     console.error (err);
+                  }
+               }
+            }
+         };
+
+         req.open ('GET', '/note/' + uid + '/delete/' + nid, true);
+         req.send ();
+      };
+
+      init();
+   </script>
+</body>
+</html >
