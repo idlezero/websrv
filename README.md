@@ -1,19 +1,20 @@
-﻿#Implementation of the NodeJS interview task
+﻿## Implementation of the NodeJS interview task
 
 The web server's API supports CRUD operations for users and notes. For read and
 delete it also supports some sort of query filter for getting/deleting sets of notes.
 
-##Build and test environment
-  Module | Version
-  -------|--------
-  node | 9.6.1
-  express | 4.16.3
-  mongodb | 4.0.3
-  mongo-mock | 3.3.2
+## Build and test environment
+
+  |Module | Version|
+  |-------|--------|
+  |node | 9.6.1|
+  |express | 4.16.3|
+  |mongodb | 4.0.3|
+  |mongo-mock | 3.3.2|
 
 The API calls were tested with Firefox add-on 'HttpRequester' and the demo web page with Firefox browser.
 
-##Configuration
+## Configuration
 
 The application uses __/server/config/config.js__ file as configuration for the server.
 The default settings configure:
@@ -33,10 +34,12 @@ example:
   WEBSRV_LOG_FILE=c:\logs\websrv_%DATE%.log
 ```
 
-##Installation
+## Installation
+
 Put application files in a folder, open console and type `npm install .`
 
-##Test
+## Test
+
   1. Run `node server/app.js`
   2. Open http://localhost:7000/notes.htm in web browser.
   3. Enter name of the new user in field __User name__ and press __Create user__ button. The user should appear below.
@@ -57,9 +60,10 @@ Note:
 ```
 
 The demo page contains small API console where you can see result of executing of the API
-calls. Here is a screenshoot of it (.public/demo.jpg):
-![Screenshot](http://localhost:7000/demo.jpg)
+calls.
+![Screenshot](public/demo.jpg)
 
-##Limitations
+## Limitations
+
   The test web page does not have UI elements for executing all API calls supported from
   the web server, for example edit and delete of a note.
